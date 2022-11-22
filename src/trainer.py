@@ -8,19 +8,21 @@ import requests
 @dataclass
 class Trainer:
     model: any = None
-    train_loader: any = None
-    val_loader: any = None
-    epochs: int = 1
+    data_manager: any = None
     ip: str = "0.0.0.0"
-    port: str = "5000"
+    port: int = 5000
+    epochs: int = 1
+
 
     def train(self):
+        train_loader = self.data_manager.train_loader
+        val_loader = self.data_manager.validation_loader
         train_loss = []
         val_loss = []
 
         for epoch in range(self.epochs):
             loss = []
-            for batch_idx, data_target in enumerate(self.train_loader):
+            for batch_idx, data_target in enumerate(train_loader):
                 data = data_target[0]
                 target = data_target[1]
                 loss.append(self.model.step(data, target))
@@ -30,7 +32,7 @@ class Trainer:
 
             with torch.no_grad():
                 loss = []
-                for data_target in self.val_loader:
+                for data_target in val_loader:
                     data = data_target[0]
                     target = data_target[1]
                     loss.append(self.model.loss(data, target))

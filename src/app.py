@@ -58,8 +58,8 @@ def get_loss_graph(mode):
     global loss
     loss_graph = {
         'data': [Scatter(x=loss[mode][key]['index'],
-                      y=loss[mode][key]['values'],
-                    name=key) for key in loss[mode].keys()],
+                         y=loss[mode][key]['values'],
+                         name=key) for key in loss[mode].keys()],
         'layout': {
             'title': f'<b> {mode.capitalize()} Loss </b>',
             'yaxis': {
@@ -80,3 +80,6 @@ def get_accuracy_graph():
 def confusion_matrix():
     pass
 
+
+def start(ip='0.0.0.0', port=5000):
+    app.run(host=ip, port=port)
