@@ -5,6 +5,7 @@ from flask import Flask
 from flask import render_template, request, Response
 from turbo_flask import Turbo
 from plotly.graph_objs import Bar, Figure, Table, Scatter
+import numpy as np
 
 app = Flask(__name__)
 turbo = Turbo(app)
@@ -14,7 +15,7 @@ turbo = Turbo(app)
 #     'validation': dict()
 # }
 
-peformance = dict()
+performance = dict()
 
 session_details = dict()
 
@@ -35,15 +36,15 @@ def updateLoss():
     name = request.json['data']['name']
     mode = request.json['data']['mode']
     print(f'name: {name} mode: {mode}')
-    if name in peformance.keys():
-        peformance[name][mode]['values'].append(request.json['data']['value'])
-        peformance[name][mode]['index'].append(request.json['data']['index'])
+    if name in performance.keys():
+        performance[name][mode]['values'].append(request.json['data']['value'])
+        performance[name][mode]['index'].append(request.json['data']['index'])
     else:
-        peformance[name] = {'training': {'values': [], 'index': []},
+        performance[name] = {'training': {'values': [], 'index': []},
                             'validation': {'values': [], 'index': []},
-                            'evaluation': None}
-        peformance[name][mode]['values'].append(request.json['data']['value'])
-        peformance[name][mode]['index'].append(request.json['data']['index'])
+                            'evaluation': {'training': dict(), 'validation':dict()}}
+        performance[name][mode]['values'].append(request.json['data']['value'])
+        performance[name][mode]['index'].append(request.json['data']['index'])
 
     if mode == "training":
         turbo.push(turbo.update(render_template('trainingLoss.html'), 'trainingLoss'))
@@ -57,8 +58,11 @@ def updateLoss():
 def evalUpdate():
     global performance
     performance = request.json['data']
-    print(performance)
-    #turbo.push(turbo.replace(render_template('validationLoss.html'), 'validationLoss'))
+
+    if performance['mode'] == 'training':
+        turbo.push(turbo.replace(render_template('trainingEval.html'), 'trainingEval'))
+    else:
+        turbo.push(turbo.replace(render_template('validationEval.html'), 'validationEval'))
 
     return Response("Okay", status=200, mimetype='application/json')
 
@@ -66,15 +70,16 @@ def evalUpdate():
 
 @app.context_processor
 def inject_load():
-    return {'trainingLossJSON': get_loss_graph('training'), 'validationLossJSON': get_loss_graph('validation')}
+    return {'trainingLossJSON': get_loss_graph('training'), 'validationLossJSON': get_loss_graph('validation'),
+            'trainingEvalJSON': get_eval_table('training'), 'validationEvalJSON': get_eval_table('validation')}
 
 
 def get_loss_graph(mode):
-    global peformance
+    global performance
     loss_graph = {
-        'data': [Scatter(x=peformance[key][mode]['index'],
-                         y=peformance[key][mode]['values'],
-                         name=key) for key in peformance.keys()],
+        'data': [Scatter(x=performance[key][mode]['index'],
+                         y=performance[key][mode]['values'],
+                         name=key) for key in performance.keys()],
         'layout': {
             'title': f'<b> {mode.capitalize()} Loss </b>',
             'yaxis': {
@@ -88,7 +93,35 @@ def get_loss_graph(mode):
     return json.dumps(loss_graph, cls=plotly.utils.PlotlyJSONEncoder)
 
 def get_eval_table(mode):
-    pass
+    keys = ['Name', 'Accuracy', 'Classification Error', 'Precision', 'Recall', 'Specificity', 'F1-Score', 'TP', 'FP', 'TN', 'FN']
+    table = Figure([Table(
+        header=dict(
+            values=keys,
+            font=dict(size=12),
+            align="left"
+        ),
+        cells=dict(
+            values=[get_values(performance[model]['evaluation'][mode]) for model in performance.keys() if
+                    performance[model]['evaluation'][mode] is not None],
+            align="left")
+    )
+    ])
+
+    return json.dumps(table, cls=plotly.utils.PlotlyJSONEncoder)
+
+def get_values(performance_dict):
+    return [
+        performance_dict['name'],
+        np.mean(performance_dict['Classification Error']),
+        np.mean(performance_dict['Precision']),
+        np.mean(performance_dict['Recall']),
+        np.mean(performance_dict['Specificity']),
+        np.mean(performance_dict['F1-Score']),
+        np.sum(performance_dict['TP']),
+        np.sum(performance_dict['FP']),
+        np.sum(performance_dict['TN']),
+        np.sum(performance_dict['FN']),
+    ]
 
 def start(ip='0.0.0.0', port=5000):
     app.run(host=ip, port=port)
