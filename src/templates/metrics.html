@@ -2,17 +2,14 @@
 {% block content_root %}
 <div class="jumbotron">
     <div class="container">
-        <h1 class="">Metrics</h1>
-        <p class="">Explain the metrics here....</p>
+        <h1 class="">Loss</h1>
     </div>
 </div>
 <div class="container">
-        <h2>Loss Metrics</h2>
         {% include "trainingLoss.html" %}
         {% include "validationLoss.html" %}
         <hr />
         <h2>Accuracy</h2>
-
 </div>
 
 {% endblock %}

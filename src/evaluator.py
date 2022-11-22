@@ -72,7 +72,7 @@ def calc_performance(matrix, model, classes, mode):
 
 def send_peformance(performance_dict, ip, port):
     server = f'http://{ip}:{port}/'
-    endpoint = "/evaluation"
+    endpoint = "/evalUpdate"
 
     body = {
         'data': performance_dict
@@ -108,7 +108,7 @@ def evaluate_model(model, data_manager, mode):
 
 
 @dataclass
-class Evaluate:
+class Evaluator:
     model: any = None
     data_manager: any = None
     ip: str = "0.0.0.0"

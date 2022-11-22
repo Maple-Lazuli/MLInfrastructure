@@ -9,38 +9,37 @@ from plotly.graph_objs import Bar, Figure, Table, Scatter
 app = Flask(__name__)
 turbo = Turbo(app)
 
-loss = {
-    'training': dict(),
-    'validation': dict()
-}
-accuracy = {
-    'training': dict(),
-    'validation': dict()
-}
-confusion_matrix = dict()
+# loss = {
+#     'training': dict(),
+#     'validation': dict()
+# }
+
+peformance = dict()
+
+session_details = dict()
 
 
 @app.route('/')
 def metrics():
-    """
-    """
-
     return render_template('metrics.html')
 
 
 @app.route('/updateLoss', methods=["POST"])
-def update():
+def updateLoss():
     global loss
     name = request.json['data']['name']
     mode = request.json['data']['mode']
     print(f'name: {name} mode: {mode}')
-    if name in loss[mode].keys():
-        loss[mode][name]['values'].append(request.json['data']['value'])
-        loss[mode][name]['index'].append(request.json['data']['index'])
+    if name in peformance.keys():
+        peformance[name][mode]['values'].append(request.json['data']['value'])
+        peformance[name][mode]['index'].append(request.json['data']['index'])
     else:
-        loss[mode][name] = dict()
-        loss[mode][name]['values'] = [request.json['data']['value']]
-        loss[mode][name]['index'] = [request.json['data']['index']]
+        peformance[name] = {'training': {'values': [], 'index': []},
+                            'validation': {'values': [], 'index': []},
+                            'evaluation': None}
+        peformance[name][mode]['values'].append(request.json['data']['value'])
+        peformance[name][mode]['index'].append(request.json['data']['index'])
+
     if mode == "training":
         turbo.push(turbo.update(render_template('trainingLoss.html'), 'trainingLoss'))
     else:
@@ -49,17 +48,28 @@ def update():
     return Response("Okay", status=200, mimetype='application/json')
 
 
+@app.route('/evalUpdate', methods=["POST"])
+def evalUpdate():
+    global performance
+    performance = request.json['data']
+    print(performance)
+    #turbo.push(turbo.replace(render_template('validationLoss.html'), 'validationLoss'))
+
+    return Response("Okay", status=200, mimetype='application/json')
+
+
+
 @app.context_processor
 def inject_load():
     return {'trainingLossJSON': get_loss_graph('training'), 'validationLossJSON': get_loss_graph('validation')}
 
 
 def get_loss_graph(mode):
-    global loss
+    global peformance
     loss_graph = {
-        'data': [Scatter(x=loss[mode][key]['index'],
-                         y=loss[mode][key]['values'],
-                         name=key) for key in loss[mode].keys()],
+        'data': [Scatter(x=peformance[key][mode]['index'],
+                         y=peformance[key][mode]['values'],
+                         name=key) for key in peformance.keys()],
         'layout': {
             'title': f'<b> {mode.capitalize()} Loss </b>',
             'yaxis': {
@@ -71,14 +81,6 @@ def get_loss_graph(mode):
         }
     }
     return json.dumps(loss_graph, cls=plotly.utils.PlotlyJSONEncoder)
-
-
-def get_accuracy_graph():
-    pass
-
-
-def confusion_matrix():
-    pass
 
 
 def start(ip='0.0.0.0', port=5000):
