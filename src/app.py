@@ -20,8 +20,13 @@ session_details = dict()
 
 
 @app.route('/')
-def metrics():
-    return render_template('metrics.html')
+@app.route('/loss')
+def loss():
+    return render_template('loss.html')
+
+@app.route('/evaluation')
+def evaluation():
+    return render_template('eval.html')
 
 
 @app.route('/updateLoss', methods=["POST"])
@@ -82,6 +87,8 @@ def get_loss_graph(mode):
     }
     return json.dumps(loss_graph, cls=plotly.utils.PlotlyJSONEncoder)
 
+def get_eval_table(mode):
+    pass
 
 def start(ip='0.0.0.0', port=5000):
     app.run(host=ip, port=port)
