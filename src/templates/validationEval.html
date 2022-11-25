@@ -2,7 +2,7 @@
 <div id = "validationEvalTable">
 </div>
 <script>
-    var loss = {{validationEvalJSON | safe}};
-    Plotly.plot("validationEvalTable", table, table.layout);
+    var table = {{validationEvalJSON | safe}};
+    Plotly.plot("validationEvalTable", table, {});
 </script>
 </div>

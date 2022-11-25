@@ -70,7 +70,7 @@ def calc_performance(matrix, model, classes, mode):
     return performance
 
 
-def send_peformance(performance_dict, ip, port):
+def send_performance(performance_dict, ip, port):
     server = f'http://{ip}:{port}/'
     endpoint = "/evalUpdate"
 
@@ -118,4 +118,4 @@ class Evaluator:
         for mode in ['training', 'validation']:
             matrix = evaluate_model(self.model, self.data_manager, mode)
             performance = calc_performance(matrix, self.model, self.data_manager.classes, mode)
-            send_peformance(performance, self.ip, self.port)
+            send_performance(performance, self.ip, self.port)
