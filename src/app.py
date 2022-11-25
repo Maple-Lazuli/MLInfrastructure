@@ -3,7 +3,7 @@ import plotly
 
 from flask import Flask, render_template, request, Response, send_file
 from turbo_flask import Turbo
-from plotly.graph_objs import Bar, Figure, Table, Scatter
+from plotly.graph_objs import Figure, Table, Scatter
 import numpy as np
 import os
 
@@ -88,6 +88,19 @@ def restore():
     turbo.push(turbo.update(render_template('trainingLoss.html'), 'trainingLoss'))
     turbo.push(turbo.replace(render_template('validationLoss.html'), 'validationLoss'))
     return Response(f"Restored", status=200, mimetype='application/json')
+
+@app.route('/registerModel', methods=['POST'])
+def register_model():
+    global performance
+    model_data = request.json['data']
+    name = model_data['name']
+    if name not in performance.keys():
+        performance = add_model(performance, name)
+    performance[name]['model_details'] = model_data
+
+
+    return Response(f"Registered {name}", status=200, mimetype='application/json')
+
 
 
 @app.route('/reset', methods=['GET'])
@@ -190,8 +203,7 @@ def add_model(performance_dict, name):
     performance_dict[name] = {'training': {'values': [], 'index': []},
                               'validation': {'values': [], 'index': []},
                               'evaluation': {'training': dict(), 'validation': dict()},
-                              'model_details': dict(),
-                              'platform_details': dict()}
+                              'model_details': dict()}
     return performance_dict
 
 

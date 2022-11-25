@@ -1,9 +1,12 @@
 import os
+import socket
+from datetime import datetime
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torchsummary
 
 
 class Net(nn.Module):
@@ -27,6 +30,7 @@ class Net(nn.Module):
 
 class Model:
     def __init__(self, net=Net(), name="Model", save_dir="./results/", lr=0.001, batch_size=1, device=None):
+        self.creation_date = str(datetime.now())
         self.net = net
         self.criterion = nn.CrossEntropyLoss()
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr)
@@ -40,7 +44,6 @@ class Model:
         self.save_name = os.path.join(self.save_dir, f"{self.name}.pth")
         self.lr = lr
         self.batch_size = batch_size
-
         self.verify_save_dir(os.path.join(save_dir, name))
 
     def step(self, inputs, labels):
@@ -72,3 +75,19 @@ class Model:
     def verify_save_dir(self, directory):
         if not os.path.exists(directory):
             os.makedirs(directory)
+
+    def get_model_info(self):
+        return_dict = dict()
+        for attribute, value in vars(self).items():
+            return_dict[attribute] = str(value)
+
+        return_dict['host'] = socket.getfqdn()
+
+        return return_dict
+
+if __name__ == "__main__":
+    import json
+    model = Model()
+    with open("temp.txt", 'w') as file_out:
+        json.dump(model.get_model_info(), file_out)
+

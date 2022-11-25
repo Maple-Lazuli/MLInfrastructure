@@ -1,6 +1,6 @@
-import threading
-import time
 from dataclasses import dataclass
+import requests
+import threading
 
 from src.app import start
 from src.trainer import Trainer
@@ -26,7 +26,15 @@ class Manager:
     def start_watcher(self):
         threading.Thread(target=start, args=(self.ip, int(self.port),)).start()
 
-    def perform(self, reset_watcher=False, save_watcher=True):
+    def register_model(self, model):
+        post_body = {
+            'data': model.get_model_info()
+        }
+        url = f'http://{self.ip}:{self.port}/registerModel'
+
+        requests.post(url=url, json=post_body)
+
+    def perform(self):
         for trainer, evaluator in zip(self.trainers, self.evaluators):
             trainer.train()
             evaluator.evaluate()
