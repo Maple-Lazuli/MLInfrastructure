@@ -1,8 +1,7 @@
 import json
 import plotly
 
-from flask import Flask
-from flask import render_template, request, Response
+from flask import Flask, render_template, request, Response, send_file
 from turbo_flask import Turbo
 from plotly.graph_objs import Bar, Figure, Table, Scatter
 import numpy as np
@@ -25,6 +24,10 @@ def loss():
 @app.route('/evaluation')
 def evaluation():
     return render_template('eval.html')
+
+@app.route('/controller')
+def control():
+    return render_template('control.html')
 
 
 @app.route('/updateLoss', methods=["POST"])
@@ -84,13 +87,22 @@ def restore():
     turbo.push(turbo.replace(render_template('validationEval.html'), 'validationEval'))
     turbo.push(turbo.update(render_template('trainingLoss.html'), 'trainingLoss'))
     turbo.push(turbo.replace(render_template('validationLoss.html'), 'validationLoss'))
-    return Response(f"Restored:", status=200, mimetype='application/json')
+    return Response(f"Restored", status=200, mimetype='application/json')
 
 
 @app.route('/reset', methods=['GET'])
 def reset():
     global performance
     performance = dict()
+    return Response(f"Reset Success!", status=200, mimetype='application/json')
+
+
+@app.route('/download', methods=['GET'])
+def download():
+    global performance
+    with open("performance.json", 'w') as file_out:
+        json.dump(performance, file_out)
+    return send_file('performance.json')
 
 
 @app.context_processor
