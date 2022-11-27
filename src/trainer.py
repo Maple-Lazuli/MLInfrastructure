@@ -13,7 +13,6 @@ class Trainer:
     port: int = 5000
     epochs: int = 1
 
-
     def train(self):
         train_loader = self.data_manager.train_loader
         val_loader = self.data_manager.validation_loader

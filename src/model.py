@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import torchsummary
 
 
 class Net(nn.Module):
@@ -28,8 +27,9 @@ class Net(nn.Module):
         x = self.fc3(x)
         return x
 
+
 class Model:
-    def __init__(self, net=Net(), name="Model", save_dir="./results/", lr=0.001, batch_size=1, device=None):
+    def __init__(self, net=Net(), name="Model", save_dir="./results/", device=None, lr=0.001):
         self.creation_date = str(datetime.now())
         self.net = net
         self.criterion = nn.CrossEntropyLoss()
@@ -43,7 +43,6 @@ class Model:
         self.save_dir = os.path.join(save_dir, name)
         self.save_name = os.path.join(self.save_dir, f"{self.name}.pth")
         self.lr = lr
-        self.batch_size = batch_size
         self.verify_save_dir(os.path.join(save_dir, name))
 
     def step(self, inputs, labels):
@@ -84,10 +83,4 @@ class Model:
         return_dict['host'] = socket.getfqdn()
 
         return return_dict
-
-if __name__ == "__main__":
-    import json
-    model = Model()
-    with open("temp.txt", 'w') as file_out:
-        json.dump(model.get_model_info(), file_out)
 
