@@ -5,9 +5,10 @@ DESCRIPTION = 'Software infrastructure to for machine learning'
 LONG_DESCRIPTION = 'Software infrastructure for machine learning projects that makes it easier to manage experiments and log progress'
 
 setup(
-    name="machine_learning_infrastructure",
+    name="ml_infrastructure",
     version=VERSION,
     description=DESCRIPTION,
+    long_description_content_type="text/markdown",
     long_description=LONG_DESCRIPTION,
     author="Ada L",
     author_email="the.nostra.tymus@gmail.com",

@@ -5,9 +5,9 @@ from http.client import RemoteDisconnected
 import requests
 import threading
 
-from src.app import start
-from src.trainer import Trainer
-from src.evaluator import Evaluator
+from ml_infrastructure.app import start
+from ml_infrastructure.trainer import Trainer
+from ml_infrastructure.evaluator import Evaluator
 
 
 @dataclass
