@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 VERSION = '1.0'
 DESCRIPTION = 'Software infrastructure to for machine learning'
@@ -13,7 +13,7 @@ setup(
     author="Ada L",
     author_email="the.nostra.tymus@gmail.com",
     license='MIT',
-    packages=find_packages(),
+    packages=['ml_infrastructure'],
     install_requires=[
         'flask',
         'turbo_flask',

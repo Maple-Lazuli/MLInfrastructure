@@ -1,0 +1,6 @@
+flask
+numpy
+plotly
+requests
+torch
+turbo_flask

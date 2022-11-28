@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: ml-infrastructure
+Version: 1.0
+Summary: Software infrastructure to for machine learning
+Home-page: UNKNOWN
+Author: Ada L
+Author-email: the.nostra.tymus@gmail.com
+License: MIT
+Keywords: machine learning
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Description-Content-Type: text/markdown
+
+Software infrastructure for machine learning projects that makes it easier to manage experiments and log progress
+

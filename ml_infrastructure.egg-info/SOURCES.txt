@@ -1,0 +1,14 @@
+README.md
+setup.py
+ml_infrastructure/app.py
+ml_infrastructure/data_manager.py
+ml_infrastructure/evaluator.py
+ml_infrastructure/example.py
+ml_infrastructure/manager.py
+ml_infrastructure/model.py
+ml_infrastructure/trainer.py
+ml_infrastructure.egg-info/PKG-INFO
+ml_infrastructure.egg-info/SOURCES.txt
+ml_infrastructure.egg-info/dependency_links.txt
+ml_infrastructure.egg-info/requires.txt
+ml_infrastructure.egg-info/top_level.txt
