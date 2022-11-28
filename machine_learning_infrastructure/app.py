@@ -1,5 +1,6 @@
 import json
 import plotly
+import tempfile
 
 from flask import Flask, render_template, request, Response, send_file
 from turbo_flask import Turbo
@@ -12,8 +13,6 @@ turbo = Turbo(app)
 
 performance = dict()
 
-session_details = dict()
-
 
 @app.route('/')
 @app.route('/loss')
@@ -25,9 +24,14 @@ def loss():
 def evaluation():
     return render_template('eval.html')
 
+
 @app.route('/controller')
 def control():
     return render_template('control.html')
+
+@app.route('/console')
+def console():
+    return render_template('console.html')
 
 
 @app.route('/updateLoss', methods=["POST"])
@@ -89,6 +93,7 @@ def restore():
     turbo.push(turbo.replace(render_template('validationLoss.html'), 'validationLoss'))
     return Response(f"Restored", status=200, mimetype='application/json')
 
+
 @app.route('/registerModel', methods=['POST'])
 def register_model():
     global performance
@@ -98,9 +103,7 @@ def register_model():
         performance = add_model(performance, name)
     performance[name]['model_details'] = model_data
 
-
     return Response(f"Registered {name}", status=200, mimetype='application/json')
-
 
 
 @app.route('/reset', methods=['GET'])
@@ -113,9 +116,15 @@ def reset():
 @app.route('/download', methods=['GET'])
 def download():
     global performance
-    with open("performance.json", 'w') as file_out:
+    temp = tempfile.NamedTemporaryFile()
+    with open(temp.name, 'w') as file_out:
         json.dump(performance, file_out)
-    return send_file('performance.json')
+    return send_file(temp.name)
+
+
+@app.route('/shutdown', methods=['GET'])
+def shutdown():
+    os._exit(0)
 
 
 @app.context_processor

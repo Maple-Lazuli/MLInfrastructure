@@ -1,4 +1,7 @@
+import os
 from dataclasses import dataclass
+from http.client import RemoteDisconnected
+
 import requests
 import threading
 
@@ -38,6 +41,22 @@ class Manager:
         for trainer, evaluator in zip(self.trainers, self.evaluators):
             trainer.train()
             evaluator.evaluate()
+
+    def shutdown_watcher(self):
+        try:
+            requests.get(f'http://{self.ip}:{self.port}/shutdown')
+        except RemoteDisconnected as e:
+            print(f"Shutdown Watcher at {self.ip}:{self.port}")
+
+    def get_watcher_results(self):
+        res = requests.get(f'http://{self.ip}:{self.port}/download')
+        return res.text
+
+    def save_watcher_results(self, save_location, save_name):
+        text = self.get_watcher_results()
+
+        with open(os.path.join(save_location, save_name), 'w') as file_out:
+            file_out.writelines(text)
 
 
 if __name__ == "__main__":

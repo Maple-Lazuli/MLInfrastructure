@@ -86,7 +86,7 @@ def evaluate_model(model, data_manager, mode):
     classes = data_manager.classes
 
     if mode == 'training':
-        loader = data_manager.training_loader
+        loader = data_manager.train_loader
     else:
         loader = data_manager.validation_loader
 
