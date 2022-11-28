@@ -13,7 +13,14 @@ setup(
     author_email="the.nostra.tymus@gmail.com",
     license='MIT',
     packages=find_packages(),
-    install_requires=[],
+    install_requires=[
+        'flask',
+        'turbo_flask',
+        'plotly',
+        'requests',
+        'torch',
+        'numpy'
+    ],
     keywords='machine learning',
     classifiers= [
         "Development Status :: 3 - Alpha",
