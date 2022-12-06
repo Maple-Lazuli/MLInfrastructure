@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '1.0'
+VERSION = '1.1'
 DESCRIPTION = 'Software infrastructure to for machine learning'
 LONG_DESCRIPTION = 'Software infrastructure for machine learning projects that makes it easier to manage experiments and log progress'
 

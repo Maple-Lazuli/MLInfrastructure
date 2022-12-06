@@ -1,5 +1,6 @@
 README.md
 setup.py
+ml_infrastructure/__init__.py
 ml_infrastructure/app.py
 ml_infrastructure/data_manager.py
 ml_infrastructure/evaluator.py
