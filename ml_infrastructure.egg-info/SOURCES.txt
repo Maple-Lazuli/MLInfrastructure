@@ -13,3 +13,12 @@ ml_infrastructure.egg-info/SOURCES.txt
 ml_infrastructure.egg-info/dependency_links.txt
 ml_infrastructure.egg-info/requires.txt
 ml_infrastructure.egg-info/top_level.txt
+ml_infrastructure/templates/control.html
+ml_infrastructure/templates/eval.html
+ml_infrastructure/templates/header.html
+ml_infrastructure/templates/index.html
+ml_infrastructure/templates/loss.html
+ml_infrastructure/templates/trainingEval.html
+ml_infrastructure/templates/trainingLoss.html
+ml_infrastructure/templates/validationEval.html
+ml_infrastructure/templates/validationLoss.html

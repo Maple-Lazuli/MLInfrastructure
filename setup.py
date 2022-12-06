@@ -1,6 +1,6 @@
 from setuptools import setup
 
-VERSION = '1.1'
+VERSION = '1.2.4'
 DESCRIPTION = 'Software infrastructure to for machine learning'
 LONG_DESCRIPTION = 'Software infrastructure for machine learning projects that makes it easier to manage experiments and log progress'
 
@@ -22,6 +22,7 @@ setup(
         'torch',
         'numpy'
     ],
+    package_data={'ml_infrastructure':['templates/*']},
     keywords='machine learning',
     classifiers= [
         "Development Status :: 3 - Alpha",

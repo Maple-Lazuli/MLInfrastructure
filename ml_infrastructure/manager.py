@@ -55,6 +55,9 @@ class Manager:
     def save_watcher_results(self, save_location, save_name):
         text = self.get_watcher_results()
 
+        if not os.path.isdir(save_location):
+            os.mkdir(save_location)
+
         with open(os.path.join(save_location, save_name), 'w') as file_out:
             file_out.writelines(text)
 
