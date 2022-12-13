@@ -66,7 +66,7 @@ class Model:
         return self.net(inputs.to(self.device))
 
     def save(self, mode=None):
-        if mode is None:
+        if mode is not None:
             save_name = os.path.join(self.save_dir, f"{self.name}-{mode}.pth")
             torch.save(self.net.state_dict(), save_name)
         else:
