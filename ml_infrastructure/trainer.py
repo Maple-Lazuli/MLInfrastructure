@@ -12,12 +12,12 @@ class Trainer:
     ip: str = "0.0.0.0"
     port: int = 5000
     epochs: int = 1
+    train_loss = []
+    val_loss = []
 
     def train(self):
         train_loader = self.data_manager.train_loader
         val_loader = self.data_manager.validation_loader
-        train_loss = []
-        val_loss = []
 
         for epoch in range(self.epochs):
             loss = []
@@ -26,9 +26,8 @@ class Trainer:
                 target = data_target[1]
                 loss.append(self.model.step(data, target))
             epoch_loss = np.mean(loss)
-            train_loss.append(epoch_loss)
-            self.send_watcher('loss', 'training', epoch_loss, len(train_loss))
-
+            self.train_loss.append(epoch_loss)
+            self.send_watcher('loss', 'training', epoch_loss, len(self.train_loss))
             with torch.no_grad():
                 loss = []
                 for data_target in val_loader:
@@ -36,18 +35,17 @@ class Trainer:
                     target = data_target[1]
                     loss.append(self.model.loss(data, target))
             epoch_loss = np.mean(loss)
-            val_loss.append(epoch_loss)
-            self.send_watcher('loss', 'validation', epoch_loss, len(val_loss))
+            self.val_loss.append(epoch_loss)
+            self.send_watcher('loss', 'validation', epoch_loss, len(self.val_loss))
 
-            return {
-                'mean_train_loss': np.mean(train_loss),
-                'mean_validation_loss': np.mean(val_loss),
-            }
+        return {
+            'train_loss': self.train_loss,
+            'validation_loss': self.val_loss,
+        }
 
     def send_watcher(self, metric, mode, value, idx):
         server = f'http://{self.ip}:{self.port}/'
         endpoint = ""
-
         if metric == 'loss':
             endpoint = "updateLoss"
 

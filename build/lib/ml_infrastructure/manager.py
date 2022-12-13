@@ -41,16 +41,19 @@ class Manager:
         requests.post(url=url, json=post_body)
 
     def perform(self):
-        validation_loss = deque(maxlen=self.window_size)
+
         for trainer, evaluator in zip(self.trainers, self.evaluators):
             while True:
                 loss = trainer.train()
                 evaluator.evaluate()
 
-                validation_loss.append(loss['mean_validation_loss'])
+                validation_loss = deque(maxlen=self.window_size)
 
-                if len(validation_loss) > 2:
+                [validation_loss.append(l) for l in loss['validation_loss']]
+                print(validation_loss)
+                if len(validation_loss) == self.window_size:
                     slope = np.polyfit(range(0, len(validation_loss)), validation_loss, 1)[0]
+                    print(slope)
                     if -0.1 < slope:
                         trainer.model.save(mode="Final")
                         break

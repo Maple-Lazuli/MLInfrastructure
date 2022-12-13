@@ -122,8 +122,10 @@ class Evaluator:
             performance = calc_performance(matrix, self.model, self.data_manager.classes, mode)
             send_performance(performance, self.ip, self.port)
 
+            total_performance[mode] = performance
+
         self.model.save(mode="current")
 
-        if total_performance['validation']['F1-Score'] > self.best_f1:
+        if np.mean(total_performance['validation']['F1-Score']) > self.best_f1:
             self.model.save(mode='best')
-            self.best_f1 = total_performance['validation']['F1-Score']
+            self.best_f1 = np.mean(total_performance['validation']['F1-Score'])
