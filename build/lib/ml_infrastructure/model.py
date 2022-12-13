@@ -67,7 +67,8 @@ class Model:
 
     def save(self, mode=None):
         if mode is None:
-            torch.save(self.net.state_dict(), f"{self.save_name}-{mode}")
+            save_name = os.path.join(self.save_dir, f"{self.name}-{mode}.pth")
+            torch.save(self.net.state_dict(), save_name)
         else:
             torch.save(self.net.state_dict(), self.save_name)
 
