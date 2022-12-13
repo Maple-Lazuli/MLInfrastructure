@@ -12,8 +12,10 @@ class Trainer:
     ip: str = "0.0.0.0"
     port: int = 5000
     epochs: int = 1
-    train_loss = []
-    val_loss = []
+
+    def __post_init__(self):
+        self.train_loss = list()
+        self.val_loss = list()
 
     def train(self):
         train_loader = self.data_manager.train_loader

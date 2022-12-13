@@ -50,7 +50,6 @@ class Manager:
                 validation_loss = deque(maxlen=self.window_size)
 
                 [validation_loss.append(l) for l in loss['validation_loss']]
-                print(validation_loss)
                 if len(validation_loss) == self.window_size:
                     slope = np.polyfit(range(0, len(validation_loss)), validation_loss, 1)[0]
                     print(slope)
