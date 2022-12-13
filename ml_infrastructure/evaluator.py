@@ -113,9 +113,17 @@ class Evaluator:
     data_manager: any = None
     ip: str = "0.0.0.0"
     port: int = 5000
+    best_f1: int = 0
 
     def evaluate(self):
+        total_performance = {'training': None, 'validation': None}
         for mode in ['training', 'validation']:
             matrix = evaluate_model(self.model, self.data_manager, mode)
             performance = calc_performance(matrix, self.model, self.data_manager.classes, mode)
             send_performance(performance, self.ip, self.port)
+
+        self.model.save(mode="current")
+
+        if total_performance['validation']['F1-Score'] > self.best_f1:
+            self.model.save(mode='bast')
+            self.best_f1 = total_performance['validation']['F1-Score']

@@ -1,6 +1,6 @@
 flask
-numpy
+turbo_flask
 plotly
 requests
 torch
-turbo_flask
+numpy

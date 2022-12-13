@@ -2,8 +2,10 @@ import os
 from dataclasses import dataclass
 from http.client import RemoteDisconnected
 
+import numpy as np
 import requests
 import threading
+from collections import deque
 
 from ml_infrastructure.app import start
 from ml_infrastructure.trainer import Trainer
@@ -16,8 +18,9 @@ class Manager:
     data_manager: any = None
     ip: str = "0.0.0.0"
     port: int = 5000
-    epochs: int = 1
+    epochs: int = 100
     start_watcher_app: bool = True
+    window_size :int = 10
 
     def __post_init__(self):
         self.trainers = [Trainer(model, self.data_manager, self.ip, self.port, self.epochs) for model in self.models]
@@ -38,9 +41,20 @@ class Manager:
         requests.post(url=url, json=post_body)
 
     def perform(self):
+        validation_loss = deque(maxlen=self.window_size)
         for trainer, evaluator in zip(self.trainers, self.evaluators):
-            trainer.train()
-            evaluator.evaluate()
+            while True:
+                loss = trainer.train()
+                evaluator.evaluate()
+
+                validation_loss.append(loss['mean_validation_loss'])
+
+                if len(validation_loss) > 2:
+                    slope = np.polyfit(range(0, len(validation_loss)), validation_loss, 1)[0]
+
+                    if -0.1 < slope:
+                        trainer.model.save(mode="Final")
+                        break
 
     def shutdown_watcher(self):
         try:

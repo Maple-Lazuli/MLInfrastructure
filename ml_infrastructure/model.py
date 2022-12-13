@@ -65,8 +65,11 @@ class Model:
     def classify(self, inputs):
         return self.net(inputs.to(self.device))
 
-    def save(self):
-        torch.save(self.net.state_dict(), self.save_name)
+    def save(self, mode=None):
+        if mode is None:
+            torch.save(self.net.state_dict(), f"{self.save_name}-{mode}")
+        else:
+            torch.save(self.net.state_dict(), self.save_name)
 
     def load(self):
         self.net.load_state_dict(torch.load(self.save_name))
@@ -83,4 +86,3 @@ class Model:
         return_dict['host'] = socket.getfqdn()
 
         return return_dict
-

@@ -39,6 +39,11 @@ class Trainer:
             val_loss.append(epoch_loss)
             self.send_watcher('loss', 'validation', epoch_loss, len(val_loss))
 
+            return {
+                'mean_train_loss': np.mean(train_loss),
+                'mean_validation_loss': np.mean(val_loss),
+            }
+
     def send_watcher(self, metric, mode, value, idx):
         server = f'http://{self.ip}:{self.port}/'
         endpoint = ""
