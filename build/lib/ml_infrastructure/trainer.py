@@ -55,7 +55,7 @@ class Trainer:
             'data': {
                 'name': self.model.name,
                 'mode': mode,
-                'value': float(value),
+                'value': value,
                 'index': idx
             }
         }

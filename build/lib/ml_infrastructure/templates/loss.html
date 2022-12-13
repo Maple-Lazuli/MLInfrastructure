@@ -1,0 +1,14 @@
+{% extends "header.html" %}
+{% block content_root %}
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="">Loss Metrics</h1>
+    </div>
+</div>
+<div class="container">
+        {% include "trainingLoss.html" %}
+        {% include "validationLoss.html" %}
+        <hr />
+</div>
+
+{% endblock %}
