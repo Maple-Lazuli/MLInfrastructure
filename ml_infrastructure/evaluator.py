@@ -125,5 +125,5 @@ class Evaluator:
         self.model.save(mode="current")
 
         if total_performance['validation']['F1-Score'] > self.best_f1:
-            self.model.save(mode='bast')
+            self.model.save(mode='best')
             self.best_f1 = total_performance['validation']['F1-Score']

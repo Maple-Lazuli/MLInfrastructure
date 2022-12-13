@@ -51,7 +51,6 @@ class Manager:
 
                 if len(validation_loss) > 2:
                     slope = np.polyfit(range(0, len(validation_loss)), validation_loss, 1)[0]
-
                     if -0.1 < slope:
                         trainer.model.save(mode="Final")
                         break
