@@ -20,7 +20,7 @@ class Manager:
     port: int = 5000
     epochs: int = 100
     start_watcher_app: bool = True
-    window_size :int = 10
+    window_size :int = 20
 
     def __post_init__(self):
         self.trainers = [Trainer(model, self.data_manager, self.ip, self.port, self.epochs) for model in self.models]
@@ -53,7 +53,7 @@ class Manager:
                 if len(validation_loss) == self.window_size:
                     slope = np.polyfit(range(0, len(validation_loss)), validation_loss, 1)[0]
                     print(slope)
-                    if -0.1 < slope:
+                    if -0.01 < slope:
                         trainer.model.save(mode="Final")
                         break
 
