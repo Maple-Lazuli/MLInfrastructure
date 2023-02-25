@@ -1,0 +1,14 @@
+<div id="validationLoss">
+<div class = 'graph-container'>
+    <div id = "validationLossGraph" class = 'graph'>
+    </div>
+    <div id = "validationLogLossGraph" class = 'graph'>
+    </div>
+</div>
+<script>
+    var loss = {{validationLossJSON | safe}};
+    var logLoss = {{validationLogLossJSON | safe}};
+    Plotly.plot("validationLossGraph", loss, loss.layout);
+    Plotly.plot("validationLogLossGraph", logLoss, logLoss.layout);
+</script>
+</div>

@@ -1,0 +1,15 @@
+<div id="trainingLoss">
+    <div class ="graph-container">
+        <div id ="trainingLossGraph" class ="graph">
+        </div>
+        <div id ="trainingLossGraphLog" class ="graph">
+        </div>
+    </div>
+
+<script>
+    var loss = {{trainingLossJSON | safe}};
+    var logLoss = {{trainingLogLossJSON | safe}};
+    Plotly.plot("trainingLossGraph", loss, loss.layout);
+    Plotly.plot("trainingLossGraphLog", logLoss, logLoss.layout);
+</script>
+</div>

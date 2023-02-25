@@ -1,4 +1,6 @@
-README.md
+LICENSE.rst
+README.rst
+setup.cfg
 setup.py
 ml_infrastructure/__init__.py
 ml_infrastructure/app.py
