@@ -142,7 +142,7 @@ def get_loss_graph(mode):
         'layout': {
             'title': f'<b> {mode.capitalize()} Loss </b>',
             'yaxis': {
-                'title': "<b> Loss % </b>"
+                'title': "<b> Loss </b>"
             },
             'xaxis': {
                 'title': "<b> Epoch </b>"
