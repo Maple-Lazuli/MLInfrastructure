@@ -120,7 +120,7 @@ def download():
     temp = tempfile.NamedTemporaryFile()
     with open(temp.name, 'w') as file_out:
         json.dump(performance, file_out)
-    return send_file(temp.name)
+    return send_file(temp.name, download_name="Evaluation_Metrics.json")
 
 
 @app.route('/shutdown', methods=['GET'])
@@ -192,6 +192,7 @@ def get_eval_table(mode):
     return json.dumps(table, cls=plotly.utils.PlotlyJSONEncoder)
 
 
+# TODO Verify this function works
 def get_evaluation_metrics(performance, mode):
     return [
 
