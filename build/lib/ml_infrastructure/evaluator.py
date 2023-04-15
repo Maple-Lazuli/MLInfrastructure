@@ -92,17 +92,17 @@ def evaluate_model(model, data_manager, mode):
 
     confusion_matrix = np.zeros((len(classes), len(classes)), dtype=int)
 
-    with torch.no_grad():
-        for data in loader:
-            inputs, targets = data[0], data[1]
+    if len(data_manager.classes) == 2:
+        with torch.no_grad():
+            for data in loader:
+                inputs, targets = data[0], data[1]
 
-            outputs = model.classify(inputs)
-
-            _, predicted = torch.max(outputs, 1)
-            predicted = predicted.to("cpu")
-
-            for pred, true in zip(predicted, targets):
-                confusion_matrix[int(pred), int(true)] += 1
+                outputs = model.classify(inputs)
+                predicted = torch.sigmoid(outputs)
+                predicted = predicted.to("cpu")
+                predicted = [1 if x >= .5 else 0 for x in predicted]
+                for pred, true in zip(predicted, targets):
+                    confusion_matrix[int(pred), int(true)] += 1
 
     return confusion_matrix
 
@@ -129,3 +129,5 @@ class Evaluator:
         if np.mean(total_performance['validation']['F1-Score']) > self.best_f1:
             self.model.save(mode='best')
             self.best_f1 = np.mean(total_performance['validation']['F1-Score'])
+
+        return total_performance

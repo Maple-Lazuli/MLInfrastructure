@@ -12,6 +12,11 @@ app = Flask(__name__)
 turbo = Turbo(app)
 
 performance = dict()
+idx = 0
+stop_criteria = {
+    "threshold": -1,
+    "epoch": -1
+}
 
 
 @app.route('/')
@@ -22,6 +27,9 @@ def loss():
 
 @app.route('/evaluation')
 def evaluation():
+    global idx
+    idx = int(request.args['index'])
+    print(idx)
     return render_template('eval.html')
 
 
@@ -33,6 +41,47 @@ def control():
 @app.route('/console')
 def console():
     return render_template('console.html')
+
+
+@app.route('/stop')
+def stopForm():
+    return render_template('stopForm.html')
+
+
+@app.route('/stopCriteria')
+def getStopCriteria():
+    global stop_criteria
+
+    return Response(json.dumps(stop_criteria), status=200, mimetype='application/json')
+
+
+@app.route('/updateCriteria')
+def updateCriteria():
+    global stop_criteria
+
+    if request.args['index'] == "":
+        index = 0
+    else:
+        index = request.args['index']
+
+    if request.args['threshold'] == "":
+        threshold = -1
+    else:
+        threshold = request.args['threshold']
+
+    if request.args['epoch'] == "":
+        epoch = -1
+    else:
+        epoch = request.args['epoch']
+
+    stop_criteria = {
+        'metric': request.args['metric'],
+        'threshold': threshold,
+        'index': index,
+        'epoch': epoch
+    }
+
+    return Response("Okay", status=200, mimetype='application/json')
 
 
 @app.route('/updateLoss', methods=["POST"])
@@ -60,10 +109,11 @@ def evalUpdate():
     evaluation_results = request.json['data']
     name = evaluation_results['name']
     mode = evaluation_results['mode']
+
     if name not in performance.keys():
         performance = add_model(performance, name)
-
     performance[name]['evaluation'][mode] = evaluation_results
+
     if mode == 'training':
         turbo.push(turbo.replace(render_template('trainingEval.html'), 'trainingEval'))
     else:
@@ -120,7 +170,7 @@ def download():
     temp = tempfile.NamedTemporaryFile()
     with open(temp.name, 'w') as file_out:
         json.dump(performance, file_out)
-    return send_file(temp.name)
+    return send_file(temp.name, download_name="Evaluation_Metrics.json")
 
 
 @app.route('/shutdown', methods=['GET'])
@@ -176,6 +226,7 @@ def get_loss_graph_log(mode):
 
 def get_eval_table(mode):
     global performance
+    global idx
     keys = ['Name', 'Accuracy', 'Classification Error', 'Precision', 'Recall', 'Specificity', 'F1-Score', 'TP', 'FP',
             'TN', 'FN']
     table = Figure([Table(
@@ -185,47 +236,48 @@ def get_eval_table(mode):
             align="left"
         ),
         cells=dict(
-            values=get_evaluation_metrics(performance, mode),
+            values=get_evaluation_metrics(performance, mode, idx),
             align="left")
     )
     ])
     return json.dumps(table, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-def get_evaluation_metrics(performance, mode):
+# TODO Verify this function works
+def get_evaluation_metrics(performance, mode, idx=0):
     return [
 
         [key for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.mean(performance[key]['evaluation'][mode]['Accuracy']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['Accuracy'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.mean(performance[key]['evaluation'][mode]['Classification Error']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['Classification Error'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.mean(performance[key]['evaluation'][mode]['Precision']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['Precision'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.mean(performance[key]['evaluation'][mode]['Recall']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['Recall'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.mean(performance[key]['evaluation'][mode]['Specificity']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['Specificity'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.mean(performance[key]['evaluation'][mode]['F1-Score']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['F1-Score'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.sum(performance[key]['evaluation'][mode]['TP']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['TP'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.sum(performance[key]['evaluation'][mode]['FP']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['FP'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.sum(performance[key]['evaluation'][mode]['TN']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['TN'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
 
-        [np.sum(performance[key]['evaluation'][mode]['FN']) for key in performance.keys() if
+        [performance[key]['evaluation'][mode]['FN'][idx] for key in performance.keys() if
          len(performance[key]['evaluation'][mode].keys()) > 0],
     ]
 

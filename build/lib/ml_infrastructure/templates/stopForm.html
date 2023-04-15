@@ -1,0 +1,46 @@
+{% extends "header.html" %}
+{% block content_root %}
+<div class="jumbotron">
+    <div class="container">
+        <h2 class="">Terminate Training Criteria</h2>
+    </div>
+</div>
+<div class="container">
+
+  <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
+<form action="/updateCriteria" target="dummyframe">
+  <div class="form-group">
+    <label for="metric">Metric to use for termination:</label>
+    <select class="form-control" id="metric" name="metric">
+      <option>Precision</option>
+      <option>Recall</option>
+      <option>Specificity</option>
+      <option>Accuracy</option>
+      <option>F1-Score</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="threshold">Metric Threshold:</label>
+    <input type="text" class="form-control" id="threshold" name="threshold" placeholder=".99" aria-describedby="thresholdhelp">
+      <small id="thresholdhelp" class="form-text text-muted">The chosen threshold needs to be between 0 and 1.</small>
+  </div>
+
+  <div class="form-group">
+    <label for="index">Class Index:</label>
+    <input type="text" class="form-control" id="index"  name="index" placeholder="0" aria-describedby="classhelp">
+    <small id="classhelp" class="form-text text-muted">The zero-based index for the class. Defaults to 0.</small>
+  </div>
+
+    <div class="form-group">
+    <label for="epoch">Epoch Limit:</label>
+    <input type="text" class="form-control" id="epoch" name="epoch" placeholder="20" aria-describedby="epochhelp">
+    <small id="epochhelp" class="form-text text-muted">The maximum number of epochs to train on.</small>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</div>
+
+{% endblock %}

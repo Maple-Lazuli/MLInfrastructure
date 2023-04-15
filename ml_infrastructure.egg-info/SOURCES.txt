@@ -20,6 +20,7 @@ ml_infrastructure/templates/eval.html
 ml_infrastructure/templates/header.html
 ml_infrastructure/templates/index.html
 ml_infrastructure/templates/loss.html
+ml_infrastructure/templates/stopForm.html
 ml_infrastructure/templates/trainingEval.html
 ml_infrastructure/templates/trainingLoss.html
 ml_infrastructure/templates/validationEval.html
