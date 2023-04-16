@@ -49,9 +49,11 @@ class Manager:
             epoch_num = 1
             while True:
                 loss = trainer.train()
+
+
                 performance = evaluator.evaluate()
 
-                if min(performance['validation_loss']) == performance['validation_loss'][-1]:
+                if min(loss['validation_loss']) == loss['validation_loss'][-1]:
                     trainer.model.save(mode="Lowest-Val-Loss", ip=self.ip, port=self.port)
 
                 stopping_criteria = requests.get(f"http://{self.ip}:{self.port}/stopCriteria")
