@@ -22,6 +22,7 @@ class Manager:
     epochs: int = 100
     start_watcher_app: bool = True
     window_size: int = 20
+    eval_rate: int = 1
 
     def __post_init__(self):
         if self.models is not None:
@@ -46,14 +47,18 @@ class Manager:
     def perform(self):
 
         for trainer, evaluator in zip(self.trainers, self.evaluators):
-            epoch_num = 1
+            epoch_num = 0
             while True:
+                epoch_num += 1
                 loss = trainer.train()
-                performance = evaluator.evaluate()
 
                 if min(loss['validation_loss']) == loss['validation_loss'][-1]:
                     trainer.model.save(mode="Lowest-Val-Loss", ip=self.ip, port=self.port)
 
+                if epoch_num%self.eval_rate != 0:
+                    continue
+
+                performance = evaluator.evaluate()
                 stopping_criteria = requests.get(f"http://{self.ip}:{self.port}/stopCriteria")
                 stopping_criteria = json.loads(stopping_criteria.text)
 
@@ -75,7 +80,6 @@ class Manager:
                         if -0.001 < slope:
                             trainer.model.save(mode="Final", ip=self.ip, port=self.port)
                             break
-                epoch_num += 1
 
     def shutdown_watcher(self):
         try:
