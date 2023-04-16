@@ -76,11 +76,11 @@ class Model:
 
         if ip is not None and port is not None:
             res = requests.get(f'http://{ip}:{port}/download')
-            text = res.text
+            json_dict = json.loads(res.text)
             if not os.path.isdir(self.save_dir):
                 os.mkdir(self.save_dir)
             with open(os.path.join(self.save_dir, f"{self.name}-{mode}-performance-metrics.json"), 'w') as file_out:
-                json.dump(text, file_out)
+                json.dump(json_dict[self.name], file_out)
 
     def load(self):
         self.net.load_state_dict(torch.load(self.save_name))
