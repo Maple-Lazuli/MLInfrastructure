@@ -51,6 +51,9 @@ class Manager:
                 loss = trainer.train()
                 performance = evaluator.evaluate()
 
+                if min(performance['validation_loss']) == performance['validation_loss'][-1]:
+                    trainer.model.save(mode="Lowest-Val-Loss", ip=self.ip, port=self.port)
+
                 stopping_criteria = requests.get(f"http://{self.ip}:{self.port}/stopCriteria")
                 stopping_criteria = json.loads(stopping_criteria.text)
 

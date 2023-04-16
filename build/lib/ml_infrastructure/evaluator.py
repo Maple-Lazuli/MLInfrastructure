@@ -114,6 +114,7 @@ class Evaluator:
     ip: str = "0.0.0.0"
     port: int = 5000
     best_f1: int = 0
+    save_dir: str = "./results/"
 
     def evaluate(self):
         total_performance = {'training': None, 'validation': None}
@@ -127,7 +128,7 @@ class Evaluator:
         self.model.save(mode="current")
 
         if np.mean(total_performance['validation']['F1-Score']) > self.best_f1:
-            self.model.save(mode='best')
+            self.model.save(mode='best-f1-score', ip=self.ip, port=self.port)
             self.best_f1 = np.mean(total_performance['validation']['F1-Score'])
 
         return total_performance
