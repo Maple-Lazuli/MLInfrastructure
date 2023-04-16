@@ -1,7 +1,9 @@
+import json
 import os
 import socket
 from datetime import datetime
 
+import requests
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -65,12 +67,20 @@ class Model:
     def classify(self, inputs):
         return self.net(inputs.to(self.device))
 
-    def save(self, mode=None):
+    def save(self, mode=None, ip=None, port=None):
         if mode is not None:
             save_name = os.path.join(self.save_dir, f"{self.name}-{mode}.pth")
             torch.save(self.net.state_dict(), save_name)
         else:
             torch.save(self.net.state_dict(), self.save_name)
+
+        if ip is not None and port is not None:
+            res = requests.get(f'http://{ip}:{port}/download')
+            text = res.text
+            if not os.path.isdir(self.save_dir):
+                os.mkdir(self.save_dir)
+            with open(os.path.join(self.save_dir, f"{self.name}-{mode}-performance-metrics.json"), 'w') as file_out:
+                json.dump(text, file_out)
 
     def load(self):
         self.net.load_state_dict(torch.load(self.save_name))

@@ -58,20 +58,19 @@ class Manager:
                     if stopping_criteria['threshold'] != -1:
                         performance = performance['validation'][stopping_criteria['metric']][stopping_criteria['index']]
                         if performance >= stopping_criteria['threshold']:
-                            trainer.model.save(mode="Final")
+                            trainer.model.save(mode="Final", ip=self.ip, port=self.port)
                             break
                     elif stopping_criteria['epoch'] != -1:
                         if epoch_num >= int(stopping_criteria['epoch']):
-                            trainer.model.save(mode="Final")
+                            trainer.model.save(mode="Final", ip=self.ip, port=self.port)
                             break
-
                 else:
                     validation_loss = deque(maxlen=self.window_size)
                     [validation_loss.append(l) for l in loss['validation_loss']]
                     if len(validation_loss) == self.window_size:
                         slope = np.polyfit(range(0, len(validation_loss)), validation_loss, 1)[0]
                         if -0.001 < slope:
-                            trainer.model.save(mode="Final")
+                            trainer.model.save(mode="Final", ip=self.ip, port=self.port)
                             break
                 epoch_num += 1
 
@@ -87,12 +86,11 @@ class Manager:
 
     def save_watcher_results(self, save_location, save_name):
         text = self.get_watcher_results()
-
         if not os.path.isdir(save_location):
             os.mkdir(save_location)
 
         with open(os.path.join(save_location, save_name), 'w') as file_out:
-            file_out.writelines(text)
+            json.dump(text, file_out)
 
 
 if __name__ == "__main__":
