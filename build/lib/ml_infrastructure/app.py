@@ -209,7 +209,7 @@ def get_loss_graph_log(mode):
     global performance
     loss_graph = {
         'data': [Scatter(x=performance[key][mode]['index'],
-                         y=np.log10(performance[key][mode]['values']),
+                         y=[np.log10(i) if i != 0 else np.log10(.1e-100) for i in performance[key][mode]['values']],
                          name=key) for key in performance.keys()],
         'layout': {
             'title': f'<b> {mode.capitalize()} Log Loss </b>',

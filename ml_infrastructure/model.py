@@ -52,6 +52,7 @@ class Model:
         labels = labels.to(self.device)
         self.optimizer.zero_grad()
         outputs = self.net(inputs)
+
         loss = self.criterion(outputs, labels)
         loss.backward()
         self.optimizer.step()

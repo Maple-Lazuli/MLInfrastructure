@@ -12,6 +12,7 @@ class Trainer:
     ip: str = "0.0.0.0"
     port: int = 5000
     epochs: int = 1
+    print_loss: bool = False
 
     def __post_init__(self):
         self.train_loss = list()
@@ -28,6 +29,8 @@ class Trainer:
                 target = data_target[1]
                 loss.append(self.model.step(data, target))
             epoch_loss = np.mean(loss)
+            if self.print_loss:
+                print(f"Mean Epoch Training Loss: {epoch_loss}")
             self.train_loss.append(epoch_loss)
             self.send_watcher('loss', 'training', epoch_loss, len(self.train_loss))
             with torch.no_grad():
@@ -37,6 +40,8 @@ class Trainer:
                     target = data_target[1]
                     loss.append(self.model.loss(data, target))
             epoch_loss = np.mean(loss)
+            if self.print_loss:
+                print(f"Mean Epoch Validaion Loss: {epoch_loss}")
             self.val_loss.append(epoch_loss)
             self.send_watcher('loss', 'validation', epoch_loss, len(self.val_loss))
 

@@ -92,7 +92,7 @@ def evaluate_model(model, data_manager, mode):
 
     confusion_matrix = np.zeros((len(classes), len(classes)), dtype=int)
 
-    if len(data_manager.classes) == 2:
+    if len(data_manager.classes) <= 2:
         with torch.no_grad():
             for data in loader:
                 inputs, targets = data[0], data[1]
@@ -101,6 +101,16 @@ def evaluate_model(model, data_manager, mode):
                 predicted = torch.sigmoid(outputs)
                 predicted = predicted.to("cpu")
                 predicted = [1 if x >= .5 else 0 for x in predicted]
+                for pred, true in zip(predicted, targets):
+                    confusion_matrix[int(pred), int(true)] += 1
+
+    else:
+        with torch.no_grad():
+            for data in loader:
+                inputs, targets = data[0], data[1]
+                outputs = model.classify(inputs)
+                predicted = torch.argmax(outputs, 1)
+                predicted = predicted.to("cpu")
                 for pred, true in zip(predicted, targets):
                     confusion_matrix[int(pred), int(true)] += 1
 
