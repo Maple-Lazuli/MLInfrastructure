@@ -110,6 +110,7 @@ def evaluate_model(model, data_manager, mode):
                 inputs, targets = data[0], data[1]
                 outputs = model.classify(inputs)
                 predicted = torch.argmax(outputs, 1)
+                targets = targets.to("cpu")
                 predicted = predicted.to("cpu")
                 for pred, true in zip(predicted, targets):
                     confusion_matrix[int(pred), int(true)] += 1

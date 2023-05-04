@@ -22,12 +22,13 @@ setup(
         'torch',
         'numpy'
     ],
-    package_data={'ml_infrastructure':['templates/*']},
+    package_data={'ml_infrastructure': ['templates/*', 'static/styles/*', 'static/js/*']},
     keywords='machine learning',
-    classifiers= [
+    classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         'License :: OSI Approved :: MIT License',
         "Programming Language :: Python :: 3",
-    ]
+    ],
+    include_package_data=True,
 )

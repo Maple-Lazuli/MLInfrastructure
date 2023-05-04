@@ -15,6 +15,10 @@ ml_infrastructure.egg-info/SOURCES.txt
 ml_infrastructure.egg-info/dependency_links.txt
 ml_infrastructure.egg-info/requires.txt
 ml_infrastructure.egg-info/top_level.txt
+ml_infrastructure/static/js/jquery.min.js
+ml_infrastructure/static/js/plotly-latest.min.js
+ml_infrastructure/static/styles/bootstrap-theme.min.css
+ml_infrastructure/static/styles/bootstrap.min.css
 ml_infrastructure/templates/control.html
 ml_infrastructure/templates/eval.html
 ml_infrastructure/templates/header.html
