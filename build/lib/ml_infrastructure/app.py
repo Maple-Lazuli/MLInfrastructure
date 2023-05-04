@@ -229,12 +229,6 @@ def get_loss_graph_log(mode):
 def get_eval_table(mode):
     global performance
     global idx
-    with open("data.json", "w") as fout:
-        json.dump(performance, fout)
-
-    with open("data_metrics.json", "w") as fout:
-        json.dump(get_evaluation_metrics(performance, mode, idx), fout)
-
     keys = ['Name', 'Accuracy', 'Classification Error', 'Precision', 'Recall', 'Specificity', 'F1-Score', 'TP', 'FP',
             'TN', 'FN']
     table = Figure([Table(
